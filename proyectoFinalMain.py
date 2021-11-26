@@ -10,36 +10,104 @@ from dash.dependencies import Input, Output
 from dash import dash_table
 import plotly.express as px
 import dash_bootstrap_components as dbc
-
+titulos=['Entity','Year','Annual CO2 emissions (per capita)','Average monthly precipitation','Total GHG emissions excluding LUCF (CAIT)']
 
 emision = pd.read_excel("./datos/emisionCO2.xlsx")
 pais1=emision['Entity'].values
 years1=emision['Year'].values
 emisiones1=emision['Annual CO2 emissions (per capita)'].values
 
-lluvias=pd.read_excel("./datos/lluvia.xlsx")
+
+lluvia=pd.read_excel("./datos/lluvia.xlsx")
+pais2=lluvia['Entity'].values
+years2=lluvia['Year'].values
+lluvias=lluvia['Average monthly precipitation'].values
 
 
-def filtrar(lista1,lista2,lista3):
+emision2 = pd.read_excel("./datos/emisionGHC.xlsx")
+pais3=emision2['Entity'].values
+years3=emision2['Year'].values
+emisiones2=emision2['Total GHG emissions excluding LUCF (CAIT)'].values
+listaPP=[]
+#for i in pais1:
+ #   if (not(i in listaPP)):
+  #     listaPP.append(i)
+
+#print(listaPP)
+
+
+            
+
+
+diccionario=emision.to_dict('records')
+for i in titulos:
+    print(type(i))
+def filtrar():
     listaT1=[]
     listaT2=[]
     listaT3=[]
-    for i in range(len(lista1)):
-        if(lista3[i]>=1990 and lista3[i]<=2014):
-            listaT1.append(lista1[i])
-            listaT2.append(lista2[i])
-            listaT3.append(lista3[i])
-    return [listaT1,listaT2,listaT3]
+    listaT4=[]
+    listaT5=[]
+    listaT6=[]
+    i=0
+    x=0
+    y=0
+    val=False
+    while i<len(pais1):
+        if(years1[i]>=1990 and years1[i]<=2014):
+            if pais1[i]==pais2[x] and years1[i]==years2[x]:
+                
+                if pais1[i]==pais3[y] and years1[i]==years3[y]:
+                    listaT1.append(pais1[i])
+                    listaT2.append(emisiones1[i])
+                    listaT3.append(years1[i])
+                    listaT4.append(diccionario[i])
+                    listaT4[-1]['Average monthly precipitation']=lluvias[x]
+                    listaT4[-1]['Total GHG emissions excluding LUCF (CAIT)']=emisiones2[y]
+                    listaT5.append(lluvias[x])
+                    listaT6.append(emisiones2[y])
+                    x=0
+                    y=0
+                    i+=1
+                else:
+                    y+=1
+            else:
+                x+=1
+        else:
+            i+=1
+        if(x>=len(pais2)):
+            val=True
+            x=0
+        if(y>=len(pais3)):
+            val=True
+            x=0
+            y=0
+        if(val):
+            i+=1
+            val=False
+        
+        
+    return [listaT1,listaT2,listaT3,listaT4,listaT5,listaT6]
 
-listaTemp=filtrar(pais1,emisiones1,years1)
+
+listaTemp=filtrar()
 pais1=listaTemp[0]
 emisiones1=listaTemp[1]
 years1=listaTemp[2]
-
+#print(diccionario)
+diccionario=listaTemp[3]
+lluvias=listaTemp[4]
+emisiones2=listaTemp[5]
 total=0;
+pais11=pais1
+emisiones11=emisiones1
+years11=years1
+lluvias11=lluvias
+emisiones22=emisiones2
 for i in emisiones1:
     total+=i
-
+    
+print(diccionario[0])
 paiselect=["Afghanistan","Mundo"]
 
 
@@ -53,11 +121,21 @@ def sumarValues(paisName):
     return total
 def yearsValues(paisName):
     global pais1,emisiones1,years1
-    lTemp=[[],[]]
+    max1=0
+    max2=0
+    max3=0
+    lTemp=[[],[],[],[]]
+    for i in range(len(pais1)):
+        if(pais1[i]==paisName):
+            max1+=emisiones1[i]
+            max2+=lluvias[i]
+            max3+=emisiones2[i]
     for i in range(len(pais1)):
         if(pais1[i]==paisName):
             lTemp[0].append(years1[i])
-            lTemp[1].append(emisiones1[i])
+            lTemp[1].append((emisiones1[i]*100)/max1)
+            lTemp[2].append((lluvias[i]*100)/max2)
+            lTemp[3].append((emisiones2[i]*100)/max3)
     return lTemp
 
 
@@ -66,22 +144,24 @@ app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div(html.Div(html.Div([
     dcc.Input(id="names", type="text", value="Afghanistan",style={'display':'none'}),
+    dcc.Input(id="pruebast", type="text", value="ddd",style={'display':'none'}),
     dcc.Input(id="values", type="text", value="Annual CO2 emissions (per capita)", style={'display':'none'}),
-    html.Div([(html.Div([dcc.Graph(id="line-chart")],className="row")),(html.Div([dcc.Graph(id="pie-chart")],className="row"))],className="col"),
-    html.Div([dash_table.DataTable(
-        
+    html.Div([(html.Div([dcc.Graph(id="line-chart")],className="row rowline")),(html.Div([dcc.Graph(id="pie-chart")],className="row rowPie"))],className="col"),
+    html.Div([html.Div([html.Div([dcc.Input(id="search", type="search",className="form-control")],className="col colInputSearch"),html.Div([html.Button('Search', id='SearchBut',className="btn btn-primary", n_clicks=0)],className="col colButtonSearch"),html.Div([html.Button('Paises', id='Paises', n_clicks=0)],className="col"),html.Div([html.Button('Regiones', id='Regiones', n_clicks=0)],className="col")],className="row"),dash_table.DataTable(
+        #autoWidth= "false",
         id='table',
-        columns=[{"name": i, "id": i} 
-                 for i in emision.columns],
-    
-        data=emision.to_dict('records'),
+        columns=[{"name": i, "id": i} for i in titulos],
+        style_cell = dict(textAlign="center",fontSize=10),
+        data=diccionario,
         page_size=25,
-        style_cell=dict(textAlign='center'),
+        
+       
         style_header=dict(backgroundColor="paleturquoise"),
-        style_data=dict(backgroundColor="lavender")
+        
+        fill_width=False
     )],className="col"),
     
-],className="row"),className="container"),className="container-fluid")
+],className="row"),className="container"),style={'margin-top':'2%'},className="container-fluid")
 
 @app.callback(
     Output("pie-chart", "figure"), 
@@ -111,11 +191,52 @@ def change(names,actual,page):
     [Input("names", "value")])
 def update_line_chart(pais1):
     
-    fig = px.line(emision, 
-        x=yearsValues(pais1)[0], y=yearsValues(pais1)[1])
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=yearsValues(pais1)[0], y=yearsValues(pais1)[1], name='CO2',
+                         line=dict(color='firebrick', width=4)))
+    fig.add_trace(go.Scatter(x=yearsValues(pais1)[0], y=yearsValues(pais1)[2], name='Lluvia',
+                         line=dict(color='blue', width=4)))
+    fig.add_trace(go.Scatter(x=yearsValues(pais1)[0], y=yearsValues(pais1)[3], name='GHC',
+                         line=dict(color='brown', width=4)))
+
     fig.update_xaxes(title_text="Año")
     fig.update_yaxes(title_text="Emision de CO2")
-    fig.update_layout(legend_title_text = "dd")
+    fig.update_layout(plot_bgcolor='rgb(78,205,196)',paper_bgcolor='rgb(239,241,243)')
     return fig
 
-app.run_server(debug=True)
+@app.callback(
+    Output("table", "data"), 
+    [Input("search", "value")])
+def updateTable(valor):
+        global pais1,emisiones1,years1,lluvias,emisiones2
+        
+        if(valor is None):
+            pais1=pais11
+            emisiones1=emisiones11
+            years1=years1
+            lluvias=lluvias11
+            emisiones2=emisiones22
+            return diccionario
+        else:
+            dTemp=[]
+            pais1=[]
+            emisiones1=[]
+            years1=[]
+            lluvias=[]
+            emisiones2=[]
+            for i in diccionario:
+                if(i['Entity'].upper()== str(valor).upper() or i['Entity'].upper().find(str(valor).upper())!=-1 ):
+                    dTemp.append(i)
+
+            for i in dTemp:
+                pais1.append(i['Entity'])
+                emisiones1.append(i['Annual CO2 emissions (per capita)'])
+                years1.append(i['Year'])
+                lluvias.append(i['Average monthly precipitation'])
+                emisiones2.append(i['Total GHG emissions excluding LUCF (CAIT)'])
+            return dTemp
+
+
+
+
+app.run_server(debug=False)
