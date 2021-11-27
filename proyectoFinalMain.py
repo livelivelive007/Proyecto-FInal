@@ -289,4 +289,4 @@ def updateTable(valor):
 
 
 
-app.run_server(debug=False)
+app.run_server(debug=True)
