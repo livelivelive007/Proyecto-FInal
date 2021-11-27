@@ -10,7 +10,13 @@ from dash.dependencies import Input, Output
 from dash import dash_table
 import plotly.express as px
 import dash_bootstrap_components as dbc
-titulos=['Entity','Year','Annual CO2 emissions (per capita)','Average monthly precipitation','Total GHG emissions excluding LUCF (CAIT)']
+
+RegionesDic=['Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern HemisphereNorthern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Northern Hemisphere', 'Northern Hemisphere', 'Southern Hemisphere', 'Southern Hemisphere']
+PaisesDic=['Afghanistan', 'Africa', 'Albania', 'Algeria', 'Andorra', 'Angola', 'Anguilla', 'Antigua and Barbuda', 'Argentina', 'Armenia', 'Aruba', 'Asia', 'Australia', 'Austria', 'Azerbaijan', 'Bahamas', 'Bahrain', 'Bangladesh', 'Barbados', 'Belarus', 'Belgium', 'Belize', 'Benin', 'Bermuda', 'Bhutan', 'Bolivia', 'Bonaire Sint Eustatius and Saba', 'Bosnia and Herzegovina', 'Botswana', 'Brazil', 'British Virgin Islands', 'Brunei', 'Bulgaria', 'Burkina Faso', 'Burundi', 'Cambodia', 'Cameroon', 'Canada', 'Cape Verde', 'Central African Republic', 'Chad', 'Chile', 'China', 'Colombia', 'Comoros', 'Congo', 'Cook Islands', 'Costa Rica', "Cote d'Ivoire", 'Croatia', 'Cuba', 'Curacao', 'Cyprus', 'Czechia', 'Democratic Republic of Congo', 'Denmark', 'Djibouti', 'Dominica', 'Dominican Republic', 'Ecuador', 'Egypt', 'El Salvador', 'Equatorial Guinea', 'Eritrea', 'Estonia', 'Eswatini', 'Ethiopia', 'Europe', 'Faeroe Islands', 'Fiji', 'Finland', 'France', 'French Polynesia', 'Gabon', 'Gambia', 'Georgia', 'Germany', 'Ghana', 'Greece', 'Greenland', 'Grenada', 'Guatemala', 'Guinea', 'Guinea-Bissau', 'Guyana', 'Haiti', 'Honduras', 'Hong Kong', 'Hungary', 'Iceland', 'India', 'Indonesia', 'Iran', 'Iraq', 'Ireland', 'Israel', 'Italy', 'Jamaica', 'Japan', 'Jordan', 'Kazakhstan', 'Kenya', 'Kiribati', 'Kuwait', 'Kyrgyzstan', 'Laos', 'Latvia', 'Lebanon', 'Lesotho', 'Liberia', 'Libya', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Macao', 'Madagascar', 'Malawi', 'Malaysia', 'Maldives', 'Mali', 'Malta', 'Marshall Islands', 'Mauritania', 'Mauritius', 'Mexico', 'Moldova', 'Mongolia', 'Montenegro', 'Montserrat', 'Morocco', 'Mozambique', 'Myanmar', 'Namibia', 'Nauru', 'Nepal', 'Netherlands', 'New Caledonia', 'New Zealand', 'Nicaragua', 'Niger', 'Nigeria', 'Niue', 'North America', 'North Korea', 'North Macedonia', 'Norway', 'Oceania', 'Oman', 'Pakistan', 'Palau', 'Palestine', 'Panama', 'Papua New Guinea', 'Paraguay', 'Peru', 'Philippines', 'Poland', 'Portugal', 'Qatar', 'Romania', 'Russia', 'Rwanda', 'Saint Helena', 'Saint Kitts and Nevis', 'Saint Lucia', 'Saint Pierre and Miquelon', 'Saint Vincent and the Grenadines', 'Samoa', 'Sao Tome and Principe', 'Saudi Arabia', 'Senegal', 'Serbia', 'Seychelles', 'Sierra Leone', 'Singapore', 'Sint Maarten (Dutch part)', 'Slovakia', 'Slovenia', 'Solomon Islands', 'Somalia', 'South Africa', 'South America', 'South Korea', 'South Sudan', 'Spain', 'Sri Lanka', 'Sudan', 'Suriname', 'Sweden', 'Switzerland', 'Syria', 'Taiwan', 'Tajikistan', 'Tanzania', 'Thailand', 'Timor', 'Togo', 'Tonga', 'Trinidad and Tobago', 'Tunisia', 'Turkey', 'Turkmenistan', 'Turks and Caicos Islands', 'Tuvalu', 'Uganda', 'Ukraine', 'United Arab Emirates', 'United Kingdom', 'United States', 'Uruguay', 'Uzbekistan', 'Vanuatu', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe']
+DiccionarioRegiones={}
+for i in range(len(RegionesDic)):
+    DiccionarioRegiones[PaisesDic[i]]=RegionesDic[i]
+titulos=['Entity','Year','Annual CO2 emissions (per capita)','Average monthly precipitation','Total GHG emissions excluding LUCF (CAIT)','Region']
 
 emision = pd.read_excel("./datos/emisionCO2.xlsx")
 pais1=emision['Entity'].values
@@ -64,6 +70,7 @@ def filtrar():
                     listaT4.append(diccionario[i])
                     listaT4[-1]['Average monthly precipitation']=lluvias[x]
                     listaT4[-1]['Total GHG emissions excluding LUCF (CAIT)']=emisiones2[y]
+                    listaT4[-1]['Region']=DiccionarioRegiones[pais1[i]]
                     listaT5.append(lluvias[x])
                     listaT6.append(emisiones2[y])
                     x=0
@@ -107,7 +114,11 @@ emisiones22=emisiones2
 for i in emisiones1:
     total+=i
     
-print(diccionario[0])
+lltt=[]
+for i in pais1:
+    if(not(i in lltt)):
+        lltt.append(i)
+print(len(lltt))        
 paiselect=["Afghanistan","Mundo"]
 
 
@@ -141,13 +152,13 @@ def yearsValues(paisName):
 
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
-
-app.layout = html.Div(html.Div(html.Div([
+#Pais
+app.layout = html.Div([html.Div(html.Div(html.Div([
     dcc.Input(id="names", type="text", value="Afghanistan",style={'display':'none'}),
     dcc.Input(id="pruebast", type="text", value="ddd",style={'display':'none'}),
     dcc.Input(id="values", type="text", value="Annual CO2 emissions (per capita)", style={'display':'none'}),
     html.Div([(html.Div([dcc.Graph(id="line-chart")],className="row rowline")),(html.Div([dcc.Graph(id="pie-chart")],className="row rowPie"))],className="col"),
-    html.Div([html.Div([html.Div([dcc.Input(id="search", type="search",className="form-control")],className="col colInputSearch"),html.Div([html.Button('Search', id='SearchBut',className="btn btn-primary", n_clicks=0)],className="col colButtonSearch"),html.Div([html.Button('Paises', id='Paises', n_clicks=0)],className="col"),html.Div([html.Button('Regiones', id='Regiones', n_clicks=0)],className="col")],className="row"),dash_table.DataTable(
+    html.Div([html.Div([html.Div([dcc.Input(id="search", type="search",className="form-control")],className="col colInputSearch"),html.Div([html.Label('Vista por paises')],className="col"),html.Div([html.Button('Ver por Regiones',className="regionButton")],className="col")],className="row"),dash_table.DataTable(
         #autoWidth= "false",
         id='table',
         columns=[{"name": i, "id": i} for i in titulos],
@@ -161,7 +172,46 @@ app.layout = html.Div(html.Div(html.Div([
         fill_width=False
     )],className="col"),
     
-],className="row"),className="container"),style={'margin-top':'2%'},className="container-fluid")
+],className="row"),className="container"),style={'margin-top':'2%'},className="container-fluid porPais"),
+
+#Region
+html.Div(html.Div(html.Div([
+    dcc.Input(id="namesR", type="text", value="Afghanistan",style={'display':'none'}),
+    dcc.Input(id="pruebastR", type="text", value="ddd",style={'display':'none'}),
+    dcc.Input(id="valuesR", type="text", value="Annual CO2 emissions (per capita)", style={'display':'none'}),
+    html.Div([(html.Div([dcc.Graph(id="line-chartR")],className="row rowline")),(html.Div([dcc.Graph(id="pie-chartR")],className="row rowPie"))],className="col"),
+    html.Div([html.Div([html.Div([dcc.Input(id="searchR", type="search",className="form-control")],className="col colInputSearch"),html.Div([html.Label('Vista por regiones')],className="col"),html.Div([html.Button('Ver por paises', className="paisButton")],className="col")],className="row"),dash_table.DataTable(
+        #autoWidth= "false",
+        id='tableR',
+        columns=[{"name": i, "id": i} for i in titulos],
+        style_cell = dict(textAlign="center",fontSize=10),
+        data=diccionario,
+        page_size=25,
+        
+       
+        style_header=dict(backgroundColor="paleturquoise"),
+        
+        fill_width=False
+    )],className="col"),
+    
+],className="row"),className="container"),style={'margin-top':'2%','display':'none'},className="container-fluid porRegion")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                       ])
 
 @app.callback(
     Output("pie-chart", "figure"), 
